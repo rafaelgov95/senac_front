@@ -70,6 +70,6 @@ const produtos_banco_de_dados = [{
     res.json(produtos_banco_de_dados)
   })
   
-  app.listen(port,'0.0.0.0' () => {
+  app.listen(port,'0.0.0.0', () => {
     console.log(`Example app listening on port ${port}`)
   })
