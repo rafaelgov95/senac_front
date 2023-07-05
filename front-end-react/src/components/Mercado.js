@@ -43,6 +43,16 @@ export default function Mercado() {
     }
     setCarrinho([...carrinho]);
     info.total =Number((produto.valor+info.total).toFixed(2))
+    info.produtos += 1 
+    info.produtos_dif=carrinho.length
+    console.log(carrinho)
+    if(info.produtos_dif>=3 && info.produtos<5){
+      info.desconto = Number((info.total*0.1).toFixed(2))
+    }else if(info.produtos_dif>=5){
+      info.desconto = Number((info.total*0.2).toFixed(2))
+    }else{
+      info.desconto=0
+    }
     setInf(info);
   }
 
@@ -57,7 +67,19 @@ export default function Mercado() {
         info.total=0;
       }
       let newCarrinhoSemProduto = carrinho.filter((item) => item.estoque !== 0);
+      console.log(newCarrinhoSemProduto)
+      console.log(carrinho)
       setCarrinho(newCarrinhoSemProduto);
+      info.produtos-=1;
+      console.log(carrinho)
+      info.produtos_dif=newCarrinhoSemProduto.length
+      if(info.produtos_dif>=3 && info.produtos<5){
+        info.desconto = Number((info.total*0.1).toFixed(2))
+      }else if(info.produtos_dif>=5){
+        info.desconto = Number((info.total*0.2).toFixed(2))
+      }else{
+        info.desconto=0
+      }
       setInf(info);
     }
 
@@ -104,18 +126,18 @@ export default function Mercado() {
           </div>
           <div className="inf_desc">
             <h3>
-              Desconto R$: <span id="carrinho_inf_desc_template"> 0</span>
+              Desconto R$: <span id="carrinho_inf_desc_template">{info.desconto}</span>
             </h3>
           </div>
           <div className="inf_qtd">
             <h3>
-              Produtos Qtd: <span id="carrinho_inf_qtd_template"> 0</span>
+              Produtos Qtd: <span id="carrinho_inf_qtd_template"> {info.produtos}</span>
             </h3>
           </div>
           <div className="inf_dif">
             <h3>
-              Produtos Diferentes:{" "}
-              <span id="carrinho_inf_qtd_dif_template"> 0</span>
+              Produtos Diferentes:
+              <span id="carrinho_inf_qtd_dif_template">{info.produtos_dif}</span>
             </h3>
           </div>
         </div>
