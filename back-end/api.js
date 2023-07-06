@@ -105,7 +105,7 @@ app.post("/login", (req, res) => {
 });
 
 app.get("/produtos", (req, res) => {
-  res.status(200).json(produtos_banco_de_dados);
+  res.status(200).jsonp(produtos_banco_de_dados);
 });
 function verifyToken(req, res, next) {
   console.log(req)
@@ -121,24 +121,24 @@ function verifyToken(req, res, next) {
     next();
   });
 }
-app.post("/produtos",verifyToken,(req, res) => {
+app.post("/produtos",(req, res) => {
   const newItem = req.body;
   insertItem(newItem);
   console.log()
-  res.sendStatus(200);
+  res.status(200).jsonp(newItem);
 });
 
 app.put("/produtos/:id", verifyToken, (req, res) => {
   const id = parseInt(req.params.id);
   const updatedItem = req.body;
   updateItem(id, updatedItem);
-  res.sendStatus(200);
+  res.status(200).jsonp(updatedItem);
 });
 
 app.delete("/produtos/:id",  verifyToken,(req, res) => {
   const id = parseInt(req.params.id);
   deleteItem(id);
-  res.sendStatus(200);
+  res.status(200).jsonp(id);
 });
 
 app.listen(port, "0.0.0.0",  verifyToken,() => {

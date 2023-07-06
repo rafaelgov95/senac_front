@@ -1,19 +1,16 @@
 import { useEffect, useState } from "react";
-
 import "../css/style.css";
 // const url_api ="https://unified-booster-392006.uc.r.appspot.com/login"
 const url_api ="http://localhost:8080"
 
 
-async function postProdutos(data,prefix) {
+async function postGenericJson(data,prefix) {
   const response = await fetch(`${url_api}/${prefix}`, {
     headers: {
       "Content-Type": "application/json",
     }, method: 'post', body: JSON.stringify(data)
   })
-  console.log("Tete")
-  const json = await response.json();
-  return json
+  return await response.json()
 }
 
   
@@ -110,17 +107,17 @@ export default function Mercado() {
     }
     setInf({ ...info });
   }
+  
 
   function addProdutoNovo(){
-    const data = {
-      id: 35,
-      nome: "Fruta do Conde",
-      img: "https://static3.tcdn.com.br/img/img_prod/350075/muda_de_fruta_do_conde_com_60cm_feita_de_semente_5073_1_20220412114217.jpg",
-      valor: 46.33,
-      estoque: 330,
-    }
-    console.log('dfasdfa')
-    postProdutos(data,"produtos").then(data=>{console.log(data)})
+      const data={
+        id: 8,
+        nome: "Banana",
+        img: "https://mercadoorganico.com/6398-large_default/banana-prata-organica-600g-osm.jpg",
+        valor: 3.15,
+        estoque: 1023,
+      }
+    postGenericJson(data,"produtos").then(data=>{console.log('Return:',data);produtos.push(data);setProdutos([...produtos])})
   }
 
   useEffect(() => {

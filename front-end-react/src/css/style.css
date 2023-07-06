@@ -54,8 +54,8 @@ body {
 }
 .produtos{
     align-content: flex-start;
-    justify-content: safe;
-    width: 60%;
+    /* justify-content: safe; */
+    width: 100%;
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
