@@ -93,14 +93,11 @@ app.get("/", (req, res) => {
 
 app.post("/login", (req, res) => {
   const { user, password } = req.body;
-  console.log("EEE",user)
   const isUser = db_fake.find(
     (data) => data.user === user && data.password === password
   );
-  console.log("Not user",isUser)
   if (isUser) {
     const token = jwt.sign({ user }, secretKey);
-    console.log("Is",isUser)
     res.status(200).jsonp({ login: true, token:token });
   } else {
     res.status(404).jsonp({ login: false });
@@ -124,9 +121,8 @@ function verifyToken(req, res, next) {
     next();
   });
 }
-app.post("/produtos",(req, res) => {
+app.post("/produtos",verifyToken,(req, res) => {
   const newItem = req.body;
-  console.log('fdas',newItem)
   insertItem(newItem);
   console.log()
   res.sendStatus(200);
