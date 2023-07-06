@@ -82,13 +82,13 @@ var app = express();
 const port = 8080;
 app.use(cors());
 app.use(express.json());
-
+let id=produtos_banco_de_dados.length+1
 
 
 app.get("/", (req, res) => {
   res
     .status(200)
-    .jsonp("API da Turma de Front-End do SENAC HUN Campo Grande - MS!");
+    .jsonp("API da Turma de Front-End do SENAC Academy HUB Campo Grande - MS!");
 });
 
 app.post("/login", (req, res) => {
@@ -122,9 +122,10 @@ function verifyToken(req, res, next) {
   });
 }
 app.post("/produtos",(req, res) => {
-  const newItem = req.body;
+  var newItem = req.body;
+  newItem.id=id;
   insertItem(newItem);
-  console.log()
+  id+=1
   res.status(200).jsonp(newItem);
 });
 
