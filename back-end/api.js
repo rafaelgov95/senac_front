@@ -54,6 +54,21 @@ const produtos_banco_de_dados = [
 const db_fake = [
   { id: 0, user: "vinicius", password: '12345' },
   { id: 1, user: "rafael", password: '12345' },
+  { id: 2, user: "alison", password: '12345' },
+  { id: 3, user: "fernando", password: '12345' },
+  { id: 4, user: "Danillo", password: '12345' },
+  { id: 5, user: "Jonathan", password: '12345' },
+  { id: 6, user: "Pedro", password: '12345' },
+  { id: 7, user: "Yago", password: '12345' },
+  { id: 8, user: "Eliz", password: '12345' },
+  { id: 9, user: "vinicius_leite", password: '12345' },
+
+
+
+
+
+
+
 ];
 
 
