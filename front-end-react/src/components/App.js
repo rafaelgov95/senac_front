@@ -1,32 +1,10 @@
 import "../css/style.css";
-import Dashboard from "./Dashboard";
 import Login from "./Login";
-import {useState} from "react"
 
-async function getLogin(){
-
-}
-
-export default function App() {  
-  const [userForm,setUserForm]=useState({name:'',password:''})
-  let content;
-  let isLogin=true
-  getLogin(userForm).then(user=>{
-
-  })
-
-  if (isLogin){
-    content=
-    <Dashboard/>
-  }else{
-    content= 
-    <Login/>
-  }
+export default function App() {
   return (
-    
-      <div>
-        {content}    
-      </div>
-    
+    <div>
+      <Login />
+    </div>
   );
 }

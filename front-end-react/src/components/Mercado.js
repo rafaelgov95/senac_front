@@ -1,8 +1,24 @@
 import { useEffect, useState } from "react";
-import "../css/style.css";
 
+import "../css/style.css";
+// const url_api ="https://unified-booster-392006.uc.r.appspot.com/login"
+const url_api ="http://localhost:8080"
+
+
+async function postProdutos(data,prefix) {
+  const response = await fetch(`${url_api}/${prefix}`, {
+    headers: {
+      "Content-Type": "application/json",
+    }, method: 'post', body: JSON.stringify(data)
+  })
+  console.log("Tete")
+  const json = await response.json();
+  return json
+}
+
+  
 async function getProdutos() {
-  const response = await fetch("http://127.0.0.1:5000/produtos", {
+  const response = await fetch(`${url_api}/produtos`, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -10,6 +26,7 @@ async function getProdutos() {
   const json = await response.json();
   return json;
 }
+
 
 export default function Mercado() {
   const [produtos, setProdutos] = useState([]);
@@ -21,77 +38,106 @@ export default function Mercado() {
     produtos_dif: 0,
   });
 
-  function handleOnclick(produto) {
-    if (carrinho.length === 0) {
+  function adicionarProdutoAoCarrinho(produto) {
+    let isContem = false;
+    carrinho.forEach((item) => {
+      if (item.id === produto.id) {
+        item.estoque += 1;
+        produto.estoque -= 1;
+        isContem = true;
+      }
+    });
+    if (!isContem) {
       let new_produto = { ...produto, estoque: 1 };
       produto.estoque -= 1;
       carrinho.push(new_produto);
-    } else {
-      let isContem = false;
-      carrinho.forEach((item) => {
-        if (item.id === produto.id) {
-          item.estoque += 1;
-          produto.estoque -= 1;
-          isContem = true;
-        }
-      });
-      if (!isContem) {
-        let new_produto = { ...produto, estoque: 1 };
-        produto.estoque -= 1;
-        carrinho.push(new_produto);
-      }
     }
-    setCarrinho([...carrinho]);
-    info.total =Number((produto.valor+info.total).toFixed(2))
-    info.produtos += 1 
-    info.produtos_dif=carrinho.length
-    console.log(carrinho)
-    if(info.produtos_dif>=3 && info.produtos<5){
-      info.desconto = Number((info.total*0.1).toFixed(2))
-    }else if(info.produtos_dif>=5){
-      info.desconto = Number((info.total*0.2).toFixed(2))
-    }else{
-      info.desconto=0
-    }
-    setInf(info);
+    atualizaDashboard("+", produto, carrinho);
   }
 
-    function handleRemove(produto) {
-      carrinho.forEach((item) => {
+  function removeProdutoDoCarrinho(produto) {
+    produtos.forEach((item) => {
+      if (item.id === produto.id) {
+        item.estoque += 1;
+        produto.estoque -= 1;
+      }
+    });
+    let newCarrinhoSemProduto = carrinho.filter((item) => item.estoque !== 0);
+    atualizaDashboard("-", produto, newCarrinhoSemProduto);
+  }
+  function removeTudoDoCarrinho() {
+    carrinho.forEach((produto) => {
+      produtos.forEach((item) => {
         if (item.id === produto.id) {
-          item.estoque -= 1;
-          info.total =Number((info.total-produto.valor).toFixed(2))
+          info.total -= item.valor * produto.estoque;
+          item.estoque += produto.estoque;
+          info.produtos -= produto.estoque;
+          produto.estoque = 0;
         }
       });
-      if( info.total<=0.01){
-        info.total=0;
-      }
       let newCarrinhoSemProduto = carrinho.filter((item) => item.estoque !== 0);
-      console.log(newCarrinhoSemProduto)
-      console.log(carrinho)
       setCarrinho(newCarrinhoSemProduto);
-      info.produtos-=1;
-      console.log(carrinho)
-      info.produtos_dif=newCarrinhoSemProduto.length
-      if(info.produtos_dif>=3 && info.produtos<5){
-        info.desconto = Number((info.total*0.1).toFixed(2))
-      }else if(info.produtos_dif>=5){
-        info.desconto = Number((info.total*0.2).toFixed(2))
-      }else{
-        info.desconto=0
-      }
-      setInf(info);
+      info.produtos_dif = newCarrinhoSemProduto.length;
+    });
+    info.produtos = 0;
+    atualizaDesconto();
+  }
+
+  function atualizaDashboard(operador, produto, carrinho) {
+    setCarrinho([...carrinho]);
+    info.produtos_dif = carrinho.length;
+    if (operador === "+") {
+      info.total = produto.valor + info.total;
+      info.produtos += 1;
+    } else if (operador === "-") {
+      info.total = info.total - produto.valor;
+      info.produtos -= 1;
     }
+    if(info.produtos<1){
+      info.total=0
+    }
+    atualizaDesconto();
+   
+  }
+
+  function atualizaDesconto() {
+    if (info.produtos_dif >= 3 && info.produtos_dif < 5) {
+      info.desconto = info.total * 0.1;
+    } else if (info.produtos_dif >= 5) {
+      info.desconto = info.total * 0.2;
+    } else {
+      info.desconto = 0;
+    }
+    setInf({ ...info });
+  }
+
+  function addProdutoNovo(){
+    const data = {
+      id: 35,
+      nome: "Fruta do Conde",
+      img: "https://static3.tcdn.com.br/img/img_prod/350075/muda_de_fruta_do_conde_com_60cm_feita_de_semente_5073_1_20220412114217.jpg",
+      valor: 46.33,
+      estoque: 330,
+    }
+    console.log('dfasdfa')
+    postProdutos(data,"produtos").then(data=>{console.log(data)})
+  }
 
   useEffect(() => {
     getProdutos().then((data) => {
       setProdutos(data);
     });
   }, []);
-
+  function formatarValor(valor) {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(valor);
+  }
+  
   return (
     <>
-      <div id="produtos_painel" className="produtos">
+      <div className="produtos">
         {produtos.map((produto) => (
           <div key={produto.id} className="card">
             <div className="cartao">
@@ -102,14 +148,14 @@ export default function Mercado() {
                 <img src={produto.img} alt="" />
               </div>
               <div className="cartao_valor">
-                <p>R$:{produto.valor}</p>
+                <p>R$: {produto.valor}</p>
               </div>
               <div className="cartao_estoque">
                 <p>Disponivel: {produto.estoque}</p>
               </div>
               <div className="cartao_botao">
-                <button onClick={() => handleOnclick(produto)}>
-                  Adicionar
+                <button onClick={() => adicionarProdutoAoCarrinho(produto)}>
+                  comprar
                 </button>
               </div>
             </div>
@@ -117,31 +163,37 @@ export default function Mercado() {
         ))}
       </div>
       <div className="carrinho_page">
-        <div className="carrinho_top_inf">
-          <div className="inf_valor">
-            <h3>
-              Total R$:{" "}
-              <span id="carrinho_inf_valor_template">{info.total}</span>
-            </h3>
-          </div>
-          <div className="inf_desc">
-            <h3>
-              Desconto R$: <span id="carrinho_inf_desc_template">{info.desconto}</span>
-            </h3>
-          </div>
-          <div className="inf_qtd">
-            <h3>
-              Produtos Qtd: <span id="carrinho_inf_qtd_template"> {info.produtos}</span>
-            </h3>
-          </div>
-          <div className="inf_dif">
-            <h3>
-              Produtos Diferentes:
-              <span id="carrinho_inf_qtd_dif_template">{info.produtos_dif}</span>
-            </h3>
-          </div>
-        </div>
-        <div id="carrinho_painel" className="carrinho">
+      <div className="carrinho_top_inf">
+        <table>
+          <tbody>
+            <tr>
+              <td>Total R$:</td>
+              <td>
+                <span>{formatarValor(info.total)}</span>
+              </td>
+            </tr>
+            <tr>
+              <td>Desconto R$:</td>
+              <td>
+                <span>{formatarValor(info.desconto)}</span>
+              </td>
+            </tr>
+            <tr>
+              <td>Produtos Qtd:</td>
+              <td>
+                <span>{info.produtos}</span>
+              </td>
+            </tr>
+            <tr>
+              <td>Produtos Diferentes:</td>
+              <td>
+                <span>{info.produtos_dif}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+        <div className="carrinho">
           {carrinho.map((produto) => (
             <div key={produto.id} className="card">
               <div className="cartao">
@@ -158,15 +210,20 @@ export default function Mercado() {
                   <p>Quantidade: {produto.estoque}</p>
                 </div>
                 <div className="cartao_botao">
-                  <button onClick={() => handleRemove(produto)}>Remove</button>
+                  <button onClick={() => removeProdutoDoCarrinho(produto)}>
+                    Remove
+                  </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
-        <button id="btn_limpar">Limpar</button>
-        <button id="btn_finalizar">Finalizar Conta</button>
+        <button onClick={removeTudoDoCarrinho}>Limpar</button>
+        <button>Finalizar Conta</button>
+        <button onClick={addProdutoNovo} >ADD Produto Novo</button>
+
       </div>
     </>
   );
 }
+

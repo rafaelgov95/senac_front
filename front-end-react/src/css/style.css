@@ -20,14 +20,14 @@ body {
 .carrinho_page{
     height: 100vh;
     display: flex;
-    width: 40%;
+    width: 25%;
     background-color: rgb(187, 192, 194);
     flex-direction: column;
 
 }
 .carrinho{
     width: 100%;
-    justify-content: start;
+    justify-content: flex-start;
     align-content: flex-start;
     height: 90vh;
     flex-wrap: wrap;
@@ -40,30 +40,10 @@ body {
 }
 .carrinho_top_inf{
     display: flex;
-    height: 10%;
+    height: 25%;
     border: solid red 3px;
     justify-content: space-between;
 
-}
-.carrinho_top_inf .inf_valor{
-    display: flex;
-    width:25%;
-    border: solid rgb(29, 192, 110) 3px;
-}
-.carrinho_top_inf .inf_desc{
-    display: flex;
-    width:25%;
-    border: solid rgb(6, 19, 13) 3px;
-}
-.carrinho_top_inf .inf_qtd{
-    display: flex;
-    width:25%;
-    border: solid rgb(6, 19, 13) 3px;
-}
-.carrinho_top_inf .inf_dif{
-    display: flex;
-    width:25%;
-    border: solid rgb(6, 19, 13) 3px;
 }
 .carrinho .cartao {
     flex-grow: 1;
