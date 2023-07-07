@@ -133,7 +133,7 @@ function verifyToken(req, res, next) {
 }
 app.post("/produtos",(req, res) => {
   var newItem = req.body;
-  if(typeof newItem.user ==='string' &&  typeof newItem.img ==='string' && typeof newItem.valor ==='number' && typeof newItem.estoque ==='number'){
+  if(typeof newItem.id ==='number' && typeof newItem.user ==='string' &&  typeof newItem.img ==='string' && typeof newItem.valor ==='number' && typeof newItem.estoque ==='number'){
     newItem.id=id;
     insertItem(newItem);
     id+=1
