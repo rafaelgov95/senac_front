@@ -131,6 +131,7 @@ function verifyToken(req, res, next) {
     next();
   });
 }
+
 app.post("/produtos",(req, res) => {
   var newItem = req.body;
   newItem.id=id;
