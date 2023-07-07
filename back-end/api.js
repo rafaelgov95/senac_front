@@ -61,7 +61,8 @@ const db_fake = [
   { id: 6, user: "pedro", password: '12345' },
   { id: 7, user: "yago", password: '12345' },
   { id: 8, user: "eliz", password: '12345' },
-  { id: 9, user: "vinicius_leite", password: '12345' }
+  { id: 9, user: "vinicius_leite", password: '12345' },
+  { id: 10, user: "maria", password: '12345' }
 
 ];
 
