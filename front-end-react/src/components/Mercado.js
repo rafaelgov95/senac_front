@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import "../css/style.css";
-// const url_api ="https://unified-booster-392006.uc.r.appspot.com/login"
-const url_api ="http://localhost:8080"
+const url_api = "https://unified-booster-392006.uc.r.appspot.com"
+// const url_api ="http://localhost:8080"
 
 
-async function postGenericJson(data,prefix) {
+async function postGenericJson(data, prefix) {
   const response = await fetch(`${url_api}/${prefix}`, {
     headers: {
       "Content-Type": "application/json",
@@ -13,7 +13,7 @@ async function postGenericJson(data,prefix) {
   return await response.json()
 }
 
-  
+
 async function getProdutos() {
   const response = await fetch(`${url_api}/produtos`, {
     headers: {
@@ -90,11 +90,11 @@ export default function Mercado() {
       info.total = info.total - produto.valor;
       info.produtos -= 1;
     }
-    if(info.produtos<1){
-      info.total=0
+    if (info.produtos < 1) {
+      info.total = 0
     }
     atualizaDesconto();
-   
+
   }
 
   function atualizaDesconto() {
@@ -107,17 +107,17 @@ export default function Mercado() {
     }
     setInf({ ...info });
   }
-  
 
-  function addProdutoNovo(){
-      const data={
-        id: 8,
-        nome: "Banana",
-        img: "https://mercadoorganico.com/6398-large_default/banana-prata-organica-600g-osm.jpg",
-        valor: 3.15,
-        estoque: 1023,
-      }
-    postGenericJson(data,"produtos").then(data=>{console.log('Return:',data);produtos.push(data);setProdutos([...produtos])})
+
+  function addProdutoNovo() {
+    const data = {
+      id: 8,
+      nome: "Banana",
+      img: "https://mercadoorganico.com/6398-large_default/banana-prata-organica-600g-osm.jpg",
+      valor: 3.15,
+      estoque: 1023,
+    }
+    postGenericJson(data, "produtos").then(data => { console.log('Return:', data); produtos.push(data); setProdutos([...produtos]) })
   }
 
   useEffect(() => {
@@ -131,7 +131,7 @@ export default function Mercado() {
       currency: 'BRL'
     }).format(valor);
   }
-  
+
   return (
     <>
       <div className="produtos">
@@ -160,36 +160,36 @@ export default function Mercado() {
         ))}
       </div>
       <div className="carrinho_page">
-      <div className="carrinho_top_inf">
-        <table>
-          <tbody>
-            <tr>
-              <td>Total R$:</td>
-              <td>
-                <span>{formatarValor(info.total)}</span>
-              </td>
-            </tr>
-            <tr>
-              <td>Desconto R$:</td>
-              <td>
-                <span>{formatarValor(info.desconto)}</span>
-              </td>
-            </tr>
-            <tr>
-              <td>Produtos Qtd:</td>
-              <td>
-                <span>{info.produtos}</span>
-              </td>
-            </tr>
-            <tr>
-              <td>Produtos Diferentes:</td>
-              <td>
-                <span>{info.produtos_dif}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <div className="carrinho_top_inf">
+          <table>
+            <tbody>
+              <tr>
+                <td>Total R$:</td>
+                <td>
+                  <span>{formatarValor(info.total)}</span>
+                </td>
+              </tr>
+              <tr>
+                <td>Desconto R$:</td>
+                <td>
+                  <span>{formatarValor(info.desconto)}</span>
+                </td>
+              </tr>
+              <tr>
+                <td>Produtos Qtd:</td>
+                <td>
+                  <span>{info.produtos}</span>
+                </td>
+              </tr>
+              <tr>
+                <td>Produtos Diferentes:</td>
+                <td>
+                  <span>{info.produtos_dif}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <div className="carrinho">
           {carrinho.map((produto) => (
             <div key={produto.id} className="card">
@@ -215,6 +215,18 @@ export default function Mercado() {
             </div>
           ))}
         </div>
+        <form>
+          <label/> id  
+          <input name='id'/> 
+          <label/> nome  
+          <input name='nome'/> 
+          <label/> imagem  
+          <input name='imagem'/> 
+          <label/> valor   
+          <input name='valor'/> 
+          <label/> quantidade   
+          <input name='quantidade'/> 
+        </form>
         <button onClick={removeTudoDoCarrinho}>Limpar</button>
         <button>Finalizar Conta</button>
         <button onClick={addProdutoNovo} >ADD Produto Novo</button>

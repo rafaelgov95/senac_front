@@ -134,10 +134,15 @@ function verifyToken(req, res, next) {
 
 app.post("/produtos",(req, res) => {
   var newItem = req.body;
-  newItem.id=id;
-  insertItem(newItem);
-  id+=1
-  res.status(200).jsonp(newItem);
+  if(typeof newItem.id ==='number' && typeof newItem.user ==='string' &&  typeof newItem.img ==='string' && typeof newItem.valor ==='number' && typeof newItem.estoque ==='number'){
+    newItem.id=id;
+    insertItem(newItem);
+    id+=1
+    res.status(200).jsonp(newItem);
+  }else{
+    res.status(400);
+  }
+  
 });
 
 app.put("/produtos/:id", verifyToken, (req, res) => {
@@ -156,3 +161,14 @@ app.delete("/produtos/:id",  verifyToken,(req, res) => {
 app.listen(port, "0.0.0.0",  verifyToken,() => {
   console.log(`Example app listening on port ${port}`);
 });
+
+
+
+class Produto {
+    constructor( produtoJson){
+      id = produtoJson.id 
+      img = produtoJson.img 
+      valor = produtoJson.valor 
+      estoque = produtoJson.estoque 
+    }
+}
