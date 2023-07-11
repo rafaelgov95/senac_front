@@ -1,29 +1,71 @@
 import { useEffect, useState } from "react";
 import "../css/style.css";
-const url_api = "https://unified-booster-392006.uc.r.appspot.com"
-// const url_api ="http://localhost:8080"
+// const url_api = "https://unified-booster-392006.uc.r.appspot.com"
+const url_api ="http://localhost:8080"
 
 
 async function postGenericJson(data, prefix) {
   const response = await fetch(`${url_api}/${prefix}`, {
     headers: {
       "Content-Type": "application/json",
+      'authorization':localStorage.getItem('token'),
     }, method: 'post', body: JSON.stringify(data)
   })
   return await response.json()
 }
 
-
-async function getProdutos() {
-  const response = await fetch(`${url_api}/produtos`, {
+async function deleteGenericJson(data, prefix) {
+  const response = await fetch(`${url_api}/${prefix}/${data.id}`, {
     headers: {
       "Content-Type": "application/json",
+      'authorization':localStorage.getItem('token'),
+    }, method: 'delete'
+  })
+  return await response.json()
+}
+
+async function putGenericJson(data, prefix) {
+  const response = await fetch(`${url_api}/${prefix}/${data.id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      'authorization':localStorage.getItem('token'),
+    }, method: 'put', body: JSON.stringify(data)
+  })
+  return await response.json()
+}
+
+
+async function getAllGenericJson(prefix) {
+  const response = await fetch(`${url_api}/${prefix}`, {
+    headers: {
+      "Content-Type": "application/json",
+      'authorization':localStorage.getItem('token')
     },
   });
   const json = await response.json();
   return json;
 }
 
+async function getIdGenericJson(id,prefix) {
+  const response = await fetch(`${url_api}/${prefix}/${id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      'authorization':localStorage.getItem('token')
+    },
+  });
+  const json = await response.json();
+  return json;
+}
+
+class Produto{
+  constructor(id,nome,img,estoque=0,valor=0){
+    this.id=id
+    this.nome=nome
+    this.img=img
+    this.estoque=estoque
+    this.valor=valor
+  }
+}
 
 export default function Mercado() {
   const [produtos, setProdutos] = useState([]);
@@ -107,7 +149,22 @@ export default function Mercado() {
     }
     setInf({ ...info });
   }
-
+  function updateProduto() {
+    const data_ = {
+      id: 1,
+      nome: "Banana",
+      img: "https://mercadoorganico.com/6398-large_default/banana-prata-organica-600g-osm.jpg",
+      valor: 3.15,
+      estoque: 1023,
+    }
+    putGenericJson(data_, "produtos").then(data => {
+      const indexOf= produtos.findIndex(p=> data.id===p.id)
+      if(indexOf!==-1){
+        produtos[indexOf]=data
+        setProdutos([...produtos])
+      }
+    })
+  }
 
   function addProdutoNovo() {
     const data = {
@@ -119,10 +176,18 @@ export default function Mercado() {
     }
     postGenericJson(data, "produtos").then(data => { console.log('Return:', data); produtos.push(data); setProdutos([...produtos]) })
   }
-
+  function removerProduto(produto) {
+    deleteGenericJson(produto, "produtos").then(data => {
+       const findIndexProduto = produto.findIndex((produto)=> produto.id===data);
+       produtos.splice(findIndexProduto,1);
+       setProdutos([...produtos])
+    })
+  }
   useEffect(() => {
-    getProdutos().then((data) => {
-      setProdutos(data);
+    getAllGenericJson('produtos').then((data) => {
+      if(data.length>0){
+        setProdutos(data);
+      }
     });
   }, []);
   function formatarValor(valor) {
@@ -154,6 +219,10 @@ export default function Mercado() {
                 <button onClick={() => adicionarProdutoAoCarrinho(produto)}>
                   comprar
                 </button>
+                <button onClick={() => removerProduto(produto)}>
+                  Delete
+                </button>
+                
               </div>
             </div>
           </div>
@@ -210,6 +279,7 @@ export default function Mercado() {
                   <button onClick={() => removeProdutoDoCarrinho(produto)}>
                     Remove
                   </button>
+                  
                 </div>
               </div>
             </div>
@@ -230,7 +300,8 @@ export default function Mercado() {
         <button onClick={removeTudoDoCarrinho}>Limpar</button>
         <button>Finalizar Conta</button>
         <button onClick={addProdutoNovo} >ADD Produto Novo</button>
-
+        <button onClick={updateProduto}> update
+                </button>
       </div>
     </>
   );
